@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Тренажёр · Заключение ЖКТ · аккредитация</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Spline+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#1c2330; --paper:#f4efe6; --paper2:#ece4d6; --line:#c9bda6;
+    --teal:#165e62; --teal-d:#0e3f42; --ox:#8c2b22; --ox-l:#b8392c; --gold:#b9892e;
+    --green:#2e6b3e; --green-bg:#e2efe1; --red:#9c2b22; --red-bg:#f5e1de; --muted:#6c6354;
+    --shadow:0 1px 0 rgba(0,0,0,.04), 0 12px 28px -18px rgba(28,35,48,.45);
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    background:
+      radial-gradient(120% 80% at 80% -10%, rgba(22,94,98,.07), transparent 60%),
+      radial-gradient(90% 70% at -10% 110%, rgba(140,43,34,.06), transparent 60%),
+      var(--paper);
+    color:var(--ink); font-family:"Spline Sans", system-ui, sans-serif; line-height:1.5; -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:1080px;margin:0 auto;padding:32px 22px 80px}
+  .backlink{display:inline-block;font-size:13px;color:var(--teal);text-decoration:none;margin-bottom:14px;font-weight:600}
+  .backlink:hover{text-decoration:underline}
+  header.top{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:14px;border-bottom:2px solid var(--ink);padding-bottom:16px}
+  .brand h1{font-family:"Fraunces",serif;font-weight:600;font-size:clamp(26px,4vw,40px);line-height:1.02;margin:0;letter-spacing:-.01em}
+  .brand .sub{color:var(--muted);font-size:13px;margin-top:6px;letter-spacing:.02em;text-transform:uppercase}
+  .kicker{font-family:"Fraunces",serif;font-style:italic;color:var(--teal);font-size:15px}
+
+  .controls{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:22px 0 8px}
+  select,button{font-family:inherit;font-size:14px}
+  .sel{appearance:none;background:var(--paper);border:1.5px solid var(--ink);border-radius:2px;padding:9px 34px 9px 12px;color:var(--ink);cursor:pointer;font-weight:500;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%231c2330' stroke-width='1.5' fill='none'/%3E%3C/svg%3E");
+    background-repeat:no-repeat;background-position:right 12px center;min-width:240px;}
+  .btn{border:1.5px solid var(--ink);background:var(--ink);color:var(--paper);padding:9px 16px;border-radius:2px;cursor:pointer;font-weight:600;letter-spacing:.01em;transition:transform .08s ease,background .15s}
+  .btn:hover{transform:translateY(-1px)}
+  .btn.ghost{background:transparent;color:var(--ink)}
+  .btn.teal{background:var(--teal);border-color:var(--teal)}
+  .btn.ox{background:var(--ox);border-color:var(--ox)}
+  .btn.active{background:var(--teal);border-color:var(--teal);color:#fff}
+
+  .scenebar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:6px;font-size:13px;color:var(--muted)}
+  .toggle{display:inline-flex;align-items:center;gap:7px;cursor:pointer;user-select:none}
+  .toggle input{display:none}
+  .toggle .dot{width:36px;height:20px;border-radius:20px;background:var(--line);position:relative;transition:.18s}
+  .toggle .dot:after{content:"";position:absolute;top:2px;left:2px;width:16px;height:16px;border-radius:50%;background:var(--paper);transition:.18s}
+  .toggle input:checked + .dot{background:var(--teal)}
+  .toggle input:checked + .dot:after{transform:translateX(16px)}
+
+  .exam-banner{margin:16px 0 0;background:linear-gradient(90deg,var(--ox),var(--ox-l));color:#fff;border-radius:3px;padding:11px 15px;font-weight:600;font-size:14px;box-shadow:var(--shadow);letter-spacing:.01em}
+
+  .cheat{margin-top:16px;border:1.5px solid var(--line);border-radius:3px;background:var(--paper);box-shadow:var(--shadow);overflow:hidden}
+  .cheat summary{cursor:pointer;list-style:none;padding:11px 15px;font-family:"Fraunces",serif;font-weight:600;font-size:15px;color:var(--teal-d);background:var(--paper2);user-select:none;display:flex;align-items:center;gap:8px}
+  .cheat summary::-webkit-details-marker{display:none}
+  .cheat summary:after{content:"▸";margin-left:auto;transition:transform .18s;color:var(--teal)}
+  .cheat[open] summary:after{transform:rotate(90deg)}
+  .cheat-body{padding:12px 15px;overflow-x:auto}
+  table.matrix{border-collapse:collapse;width:100%;font-size:13px;min-width:520px}
+  table.matrix th,table.matrix td{border:1px solid var(--line);padding:6px 9px;text-align:center}
+  table.matrix thead th{background:var(--paper2);font-weight:700;color:var(--teal-d)}
+  table.matrix td.dx{text-align:left;font-weight:600;background:#fbf7ef}
+  table.matrix td .yes{color:var(--ox);font-weight:700}
+  table.matrix td .no{color:var(--muted)}
+  .cheat-tip{font-size:12.5px;color:var(--teal-d);border-top:1px dashed var(--line);padding-top:10px;margin-top:10px}
+
+  .clin{margin:18px 0;border:1.5px solid var(--line);border-left:5px solid var(--teal);background:linear-gradient(180deg,#fbf7ef,#f4efe6);border-radius:3px;padding:16px 18px;box-shadow:var(--shadow)}
+  .clin h3{margin:0 0 8px;font-family:"Fraunces",serif;font-size:18px;color:var(--teal-d)}
+  .clin .row{display:flex;flex-wrap:wrap;gap:6px 18px;font-size:14px}
+  .clin .row b{font-weight:600}
+  .findings{margin-top:10px;font-size:14.5px;line-height:1.6}
+  .findings p{margin:6px 0}
+  .hide{display:none !important}
+
+  .learn-box{margin:16px 0 0;border:1.5px solid var(--teal);border-left:5px solid var(--teal);border-radius:3px;background:linear-gradient(180deg,#eef4ef,#e6eee6);padding:14px 16px;box-shadow:var(--shadow)}
+  .learn-box .lb-h{font-family:"Fraunces",serif;font-weight:600;font-size:18px;color:var(--teal-d);margin-bottom:8px}
+  .learn-box .lb-row{font-size:14px;line-height:1.55;margin:5px 0}
+  .learn-box .lb-row b{color:var(--teal-d)}
+  .learn-box .lb-tip{margin-top:10px;padding-top:9px;border-top:1px dashed var(--teal);font-size:12.5px;color:var(--muted)}
+
+  .grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-top:8px}
+  @media(max-width:760px){.grid{grid-template-columns:1fr}}
+  .panel{border:1.5px solid var(--line);background:var(--paper);border-radius:3px;padding:14px 15px;box-shadow:var(--shadow)}
+  .panel.full{grid-column:1/-1}
+  .panel .ttl{font-family:"Fraunces",serif;font-weight:600;font-size:15px;color:var(--ink);border-bottom:1px solid var(--line);padding-bottom:7px;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center}
+  .panel .ttl .badge{font-family:"Spline Sans";font-size:11px;font-weight:600;color:var(--teal);text-transform:uppercase;letter-spacing:.05em}
+  .field{margin:10px 0}
+  .field > label.q{display:block;font-size:13px;font-weight:600;color:var(--muted);margin-bottom:5px}
+  .opts{display:flex;flex-wrap:wrap;gap:6px}
+  .opt{position:relative}
+  .opt input{position:absolute;opacity:0;inset:0;cursor:pointer}
+  .opt span{display:inline-block;border:1.4px solid var(--line);border-radius:2px;padding:5px 10px;font-size:13px;cursor:pointer;background:var(--paper);transition:.12s;line-height:1.25}
+  .opt input:checked + span{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+  .opt input:focus-visible + span{outline:2px solid var(--gold);outline-offset:1px}
+  .graded .opt span{cursor:default}
+  .opt.good input:checked + span{background:var(--green);border-color:var(--green);color:#fff}
+  .opt.bad input:checked + span{background:var(--red);border-color:var(--red);color:#fff;text-decoration:line-through}
+  .opt.miss span{border-color:var(--green);border-style:dashed;color:var(--green);font-weight:600;box-shadow:inset 0 0 0 1px var(--green)}
+  .opt.miss span:after{content:" ✓ верно";font-size:11px;opacity:.85}
+  .locked .opt input{pointer-events:none}
+  .locked .opt span{cursor:default}
+
+  .hintbtn{display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;border-radius:50%;border:1.3px solid var(--teal);color:var(--teal);background:transparent;font-size:11px;font-weight:700;font-family:"Fraunces",serif;cursor:pointer;line-height:1;padding:0;vertical-align:middle}
+  .hintbtn:hover{background:var(--teal);color:#fff}
+  .hint{margin:6px 0 2px;font-size:12.5px;line-height:1.5;color:var(--teal-d);background:#eef3ee;border-left:3px solid var(--teal);border-radius:2px;padding:7px 10px}
+
+  .dx-panel{grid-column:1/-1;border-left:5px solid var(--ox)}
+  .dx-opts{display:grid;grid-template-columns:repeat(2,1fr);gap:6px}
+  @media(max-width:620px){.dx-opts{grid-template-columns:1fr}}
+
+  .actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:22px;align-items:center}
+  .score{margin-left:auto;font-family:"Fraunces",serif;font-size:20px;font-weight:600}
+  .score b{color:var(--teal)}
+  .score.bad b{color:var(--ox)}
+
+  .result{margin-top:18px;border:1.5px solid var(--line);border-radius:3px;overflow:hidden;box-shadow:var(--shadow)}
+  .result .head{padding:12px 16px;font-family:"Fraunces",serif;font-size:17px;font-weight:600}
+  .result .head.ok{background:var(--green-bg);color:var(--green);border-bottom:1px solid #cfe0cd}
+  .result .head.no{background:var(--red-bg);color:var(--red);border-bottom:1px solid #ecccc6}
+  .result .body{padding:14px 16px;background:var(--paper);font-size:14px}
+  .result ul{margin:6px 0 0;padding-left:20px}
+  .result li{margin:4px 0}
+  .result .reason{margin-top:12px;padding-top:12px;border-top:1px dashed var(--line);color:var(--ink)}
+  .result .reason b{color:var(--teal-d)}
+
+  .legend{font-size:12px;color:var(--muted);margin-top:14px;display:flex;gap:16px;flex-wrap:wrap}
+  .legend i{font-style:normal;display:inline-flex;align-items:center;gap:6px}
+  .sw{width:13px;height:13px;border-radius:2px;display:inline-block}
+  .note{margin-top:18px;font-size:12.5px;color:var(--muted);background:var(--paper2);border:1px solid var(--line);border-radius:3px;padding:10px 12px}
+  footer{margin-top:36px;color:var(--muted);font-size:12px;border-top:1px solid var(--line);padding-top:14px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <a class="backlink" href="./index.html">← Все станции</a>
+  <header class="top">
+    <div class="brand">
+      <div class="kicker">Второй этап аккредитации</div>
+      <h1>Заключение по физикальному<br>обследованию ЖКТ</h1>
+      <div class="sub">Тренажёр заполнения формы · 5 сценариев</div>
+    </div>
+  </header>
+
+  <div class="controls">
+    <button class="btn" id="learn">📘 Обучение</button>
+    <button class="btn ox" id="exam">🎓 Зачёт</button>
+    <select id="picker" class="sel"></select>
+    <button class="btn teal" id="random">🎲 Случайный сценарий</button>
+    <button class="btn ghost" id="check">Проверить</button>
+    <button class="btn ghost" id="reset">Сбросить</button>
+  </div>
+  <div id="examBanner" class="exam-banner hide">🎓 Режим зачёта · диагноз скрыт — заполните заключение и определите диагноз по данным осмотра. Раскроется после проверки.</div>
+  <div class="scenebar">
+    <label class="toggle"><input type="checkbox" id="showClin" checked><span class="dot"></span></label>
+    <span>Показывать клиническую картину</span>
+  </div>
+
+  <details id="cheatDx" class="cheat">
+    <summary>🩺 Шпаргалка: 4 переключателя → диагноз</summary>
+    <div class="cheat-body">
+      <table class="matrix">
+        <thead><tr><th>Диагноз</th><th>Желтуха<br>(склеры)</th><th>Печень</th><th>Селезёнка</th><th>Асцит</th></tr></thead>
+        <tbody>
+          <tr><td class="dx">Норма</td><td><span class="no">−</span></td><td><span class="no">−</span></td><td><span class="no">−</span></td><td><span class="no">−</span></td></tr>
+          <tr><td class="dx">Гепатомегалия, желтуха</td><td><span class="yes">+</span></td><td><span class="yes">+ гладкая</span></td><td><span class="no">−</span></td><td><span class="no">−</span></td></tr>
+          <tr><td class="dx">Спленомегалия</td><td><span class="no">−</span></td><td><span class="no">−</span></td><td><span class="yes">+</span></td><td><span class="no">−</span></td></tr>
+          <tr><td class="dx">Гепатоспленомегалия, желтуха</td><td><span class="yes">+</span></td><td><span class="yes">+ бугристая</span></td><td><span class="yes">+</span></td><td><span class="no">−</span></td></tr>
+          <tr><td class="dx">Асцит, гепатомегалия, желтуха</td><td><span class="yes">+</span></td><td><span class="yes">+ бугристая</span></td><td><span class="no">−</span></td><td><span class="yes">+</span></td></tr>
+        </tbody>
+      </table>
+      <div class="cheat-tip">Считай 4 признака: <b>желтуха · печень · селезёнка · асцит</b>. Селезёнка одна (без печени и желтухи) → спленомегалия. Печень гладкая + желтуха → гепатомегалия. Печень бугристая: + селезёнка → гепатоспленомегалия; + асцит и большой живот → асцит/гепатомегалия/желтуха.</div>
+    </div>
+  </details>
+
+  <div id="clin" class="clin"></div>
+  <div id="learnBox" class="learn-box hide"></div>
+
+  <form id="form" class="grid"></form>
+
+  <div class="actions">
+    <button class="btn teal" id="check2">Проверить заключение</button>
+    <button class="btn ox" id="next">Следующий сценарий →</button>
+    <div class="score" id="score"></div>
+  </div>
+
+  <div class="legend">
+    <i><span class="sw" style="background:var(--green)"></span> верно отмечено</i>
+    <i><span class="sw" style="background:var(--red)"></span> ошибка</i>
+    <i><span class="sw" style="border:1.5px dashed var(--green)"></span> пропущено (нужно было)</i>
+  </div>
+
+  <div class="note">
+    Поля «напряжение мышц», «диастаз / пупочное кольцо», «нижняя граница печени» и «дополнительное обследование»
+    в Приложении 1 паспорта напрямую не заданы — ответы по ним отражают стандартную клиническую логику; сверьтесь со своими материалами.
+  </div>
+
+  <footer>
+    Данные сценариев — Приложение 1 паспорта станции «Физикальное обследование пациента (ЖКТ)»,
+    Методический центр аккредитации специалистов, 2025. Учебный тренажёр.
+  </footer>
+</div>
+
+<script>
+/* =====================================================================
+   ДАННЫЕ СТАНЦИИ (ЖКТ) — этот блок уникален для станции.
+   Движок ниже не зависит от станции и переиспользуется.
+   ===================================================================== */
+
+const SKLERY = ["без особенностей","желтушность склер и слизистых","бледность конъюнктивы"];
+const ZHIVOT = ["без особенностей","увеличен в размере","расширение подкожных вен"];
+const BOL    = ["не определяется","в эпигастрии","в правом подреберье","в левом подреберье","в левой подвздошной области","в правой подвздошной области","в околопупочной области"];
+const YN     = ["да","нет"];
+const DIASTAZ= ["есть диастаз прямых мышц","есть расширение пупочного кольца","нет изменений"];
+const BORDER = ["у края реберной дуги","расположена на 1 см и более ниже реберной дуги"];
+const PECHEN = ["не пальпируется","увеличена, гладкая поверхность, край закруглен","увеличена, бугристая поверхность, край неровный"];
+const SELEZ  = ["не пальпируется","увеличена в размере, пальпируется"];
+const KISHKA = ["Сигмовидная кишка","Слепая кишка","Восходящая ободочная кишка","Нисходящая ободочная кишка","Поперечная ободочная кишка","Толстая кишка не пальпируется"];
+const DOPOBS = ["Не требуется","УЗИ органов брюшной полости","МРТ органов брюшной полости","Лапароцентез"];
+const DX     = ["Норма","Гепатомегалия, желтуха","Спленомегалия","Гепатоспленомегалия, желтуха","Асцит, гепатомегалия, желтуха"];
+
+/* поля формы заключения (раздел 15 паспорта) */
+const FIELDS = [
+  {sec:"Осмотр", items:[
+    {id:"sklery", q:"Осмотр склер глаз и слизистых", set:SKLERY},
+    {id:"zhivot", q:"Осмотр живота", set:ZHIVOT},
+  ]},
+  {sec:"Пальпация живота", items:[
+    {id:"bol",   q:"Болезненность при пальпации живота", set:BOL},
+    {id:"napr",  q:"Напряжение мышц передней брюшной стенки", set:YN},
+    {id:"dia",   q:"Диастаз прямых мышц / расширение пупочного кольца", set:DIASTAZ},
+    {id:"ascit", q:"Асцит (положительный симптом флюктуации)", set:YN},
+  ]},
+  {sec:"Печень и селезёнка", items:[
+    {id:"border",q:"Нижняя граница печени по среднеключичной линии", set:BORDER},
+    {id:"pechen",q:"Печень", set:PECHEN},
+    {id:"selez", q:"Селезёнка", set:SELEZ},
+  ]},
+  {sec:"Глубокая пальпация и тактика", items:[
+    {id:"kishka",q:"Методом глубокой пальпации определяется", set:KISHKA},
+    {id:"dop",   q:"Необходимость дополнительного обследования", set:DOPOBS},
+  ]},
+];
+
+const HINTS={
+  sklery:"Иктеричность склер — ранний и чувствительный признак желтухи. Сначала желтеют склеры, затем кожа. «Бледность конъюнктивы» — про анемию, не про желтуху.",
+  zhivot:"Оцениваешь размер, форму, симметричность, участие в дыхании, расширение подкожных вен. Увеличенный симметричный живот → думай об асците; «голова медузы» → портальная гипертензия.",
+  bol:"Лёгкая болезненность в эпигастрии — частая неспецифическая находка при гепатобилиарной патологии. Поверхностную пальпацию начинают с наименее болезненной зоны.",
+  napr:"Напряжение (дефанс) мышц = реакция брюшины, признак острого живота/перитонита. В этих сценариях процесс не острый — напряжения нет. (В Приложении 1 не задано — клинический вывод.)",
+  dia:"Диастаз прямых мышц проверяют, попросив поднять голову лёжа: пальцы входят в «желоб» по белой линии. В этих сценариях изменений нет. (В Приложении 1 не задано.)",
+  ascit:"Симптом флюктуации: толчок одной рукой по боковой стенке передаётся волной на другую; ассистент ребром ладони по средней линии гасит передачу по стенке. Положителен при свободной жидкости.",
+  border:"Нижнюю границу печени перкутируют по среднеключичной линии снизу вверх до тупого звука. Норма — у края рёберной дуги; на ≥1 см ниже = гепатомегалия. Прямо следует из увеличения печени.",
+  pechen:"Край печени пальпируют на вдохе. Гладкая поверхность, закруглённый край → диффузный/застойный процесс (гепатит, сердечная недостаточность). Бугристая, неровный край → цирроз, опухоль, метастазы.",
+  selez:"Селезёнка в норме не пальпируется — чтобы прощупываться, она увеличивается примерно вдвое. Пальпируют на правом боку или на спине, на вдохе из-под левой рёберной дуги.",
+  kishka:"Глубокая методическая пальпация по Образцову–Стражеско–Василенко: сигмовидная → слепая → восходящая → нисходящая → поперечная. Во всех сценариях толстая кишка не пальпируется (норма).",
+  dop:"УЗИ брюшной полости — первый, доступный шаг при гепато-/спленомегалии, желтухе, асците. При впервые выявленном асците также показан диагностический лапароцентез. (В Приложении 1 не задано — клиническая логика.)",
+  dx:"Считай 4 переключателя: желтуха (склеры) · печень · селезёнка · асцит. Их комбинация однозначно даёт диагноз."
+};
+
+const SCEN = {
+ 1:{dx:"Норма",
+    comp:"жалоб нет, живот безболезненный",
+    find:`Склеры и слизистые без особенностей. Живот не изменён, симметричен, участвует в дыхании, вены не расширены. Безболезненный, мышцы не напряжены, диастаза нет. Печень и селезёнка не пальпируются, нижняя граница печени у края рёберной дуги. Симптом флюктуации отрицательный. Толстая кишка не пальпируется.`,
+    why:"Склеры и слизистые чистые, печень и селезёнка не пальпируются, флюктуации нет → патологии нет.",
+    hook:"Все 4 переключателя выключены: желтухи нет, печень и селезёнка не пальпируются, асцита нет.",
+    ans:{sklery:"без особенностей",zhivot:"без особенностей",bol:"не определяется",napr:"нет",dia:"нет изменений",ascit:"нет",border:"у края реберной дуги",pechen:"не пальпируется",selez:"не пальпируется",kishka:"Толстая кишка не пальпируется",dop:"Не требуется"}},
+ 2:{dx:"Гепатомегалия, желтуха",
+    comp:"жалоб нет; при пальпации — лёгкая болезненность в эпигастрии",
+    find:`Иктеричность склер и слизистых. Живот не изменён. Лёгкая болезненность в эпигастрии, мышцы не напряжены. Печень <b>увеличена, поверхность гладкая, край закруглён</b>, нижняя граница на ≥1 см ниже рёберной дуги. Селезёнка не пальпируется. Флюктуация отрицательна.`,
+    why:"Иктеричность склер + увеличенная печень с гладкой поверхностью при интактной селезёнке и без асцита → гепатомегалия с желтухой.",
+    hook:"Желтуха + гладкая увеличенная печень, селезёнка норма. Гладкая поверхность → диффузный процесс.",
+    ans:{sklery:"желтушность склер и слизистых",zhivot:"без особенностей",bol:"в эпигастрии",napr:"нет",dia:"нет изменений",ascit:"нет",border:"расположена на 1 см и более ниже реберной дуги",pechen:"увеличена, гладкая поверхность, край закруглен",selez:"не пальпируется",kishka:"Толстая кишка не пальпируется",dop:"УЗИ органов брюшной полости"}},
+ 3:{dx:"Спленомегалия",
+    comp:"жалоб нет; при пальпации — лёгкая болезненность в эпигастрии",
+    find:`Склеры и слизистые без особенностей. Живот не изменён. Лёгкая болезненность в эпигастрии. Печень не пальпируется, нижняя граница у края рёберной дуги. <b>Селезёнка увеличена, пальпируется.</b> Флюктуация отрицательна.`,
+    why:"Желтухи нет, печень не увеличена, но пальпируется увеличенная селезёнка → изолированная спленомегалия.",
+    hook:"Только селезёнка: ни желтухи, ни увеличения печени, ни асцита.",
+    ans:{sklery:"без особенностей",zhivot:"без особенностей",bol:"в эпигастрии",napr:"нет",dia:"нет изменений",ascit:"нет",border:"у края реберной дуги",pechen:"не пальпируется",selez:"увеличена в размере, пальпируется",kishka:"Толстая кишка не пальпируется",dop:"УЗИ органов брюшной полости"}},
+ 4:{dx:"Гепатоспленомегалия, желтуха",
+    comp:"жалоб нет; при пальпации — лёгкая болезненность в эпигастрии",
+    find:`Иктеричность склер. Живот не изменён. Лёгкая болезненность в эпигастрии. Печень <b>увеличена, поверхность бугристая, край неровный</b>, нижняя граница ниже рёберной дуги. <b>Селезёнка увеличена, пальпируется.</b> Флюктуация отрицательна.`,
+    why:"Иктеричность + увеличенная бугристая печень + увеличенная селезёнка, асцита нет → гепатоспленомегалия с желтухой.",
+    hook:"Желтуха + бугристая печень + большая селезёнка. Бугристость → цирроз/опухоль.",
+    ans:{sklery:"желтушность склер и слизистых",zhivot:"без особенностей",bol:"в эпигастрии",napr:"нет",dia:"нет изменений",ascit:"нет",border:"расположена на 1 см и более ниже реберной дуги",pechen:"увеличена, бугристая поверхность, край неровный",selez:"увеличена в размере, пальпируется",kishka:"Толстая кишка не пальпируется",dop:"УЗИ органов брюшной полости"}},
+ 5:{dx:"Асцит, гепатомегалия, желтуха",
+    comp:"жалоб нет; живот увеличен в объёме; при пальпации — лёгкая болезненность в эпигастрии",
+    find:`Иктеричность склер. <b>Живот увеличен в размере, симметричен.</b> Лёгкая болезненность в эпигастрии. Печень <b>увеличена, поверхность бугристая, край неровный</b>. Селезёнка не пальпируется. <b>Симптом флюктуации положительный</b> (свободная жидкость).`,
+    why:"Иктеричность + увеличенная бугристая печень + увеличенный живот с положительным симптомом флюктуации → асцит, гепатомегалия, желтуха.",
+    hook:"Желтуха + бугристая печень + увеличенный живот с флюктуацией. Асцит — главный новый признак.",
+    note:"Пункт «дополнительное обследование» в Приложении 1 не задан. Здесь — стандартная логика: УЗИ как первый шаг; при впервые выявленном асците показан и диагностический лапароцентез.",
+    ans:{sklery:"желтушность склер и слизистых",zhivot:"увеличен в размере",bol:"в эпигастрии",napr:"нет",dia:"нет изменений",ascit:"да",border:"расположена на 1 см и более ниже реберной дуги",pechen:"увеличена, бугристая поверхность, край неровный",selez:"не пальпируется",kishka:"Толстая кишка не пальпируется",dop:"УЗИ органов брюшной полости"}},
+};
+
+/* =====================================================================
+   ДВИЖОК (не зависит от станции)
+   ===================================================================== */
+
+const form = document.getElementById("form");
+const picker = document.getElementById("picker");
+let current=1, examMode=false, learnMode=false;
+
+function hintFor(id){ return HINTS[id]||""; }
+
+function buildForm(){
+  form.innerHTML="";
+  FIELDS.forEach(group=>{
+    const p=document.createElement("div");
+    p.className="panel";
+    let h=`<div class="ttl">${group.sec}</div>`;
+    group.items.forEach(f=>{
+      const hint=hintFor(f.id);
+      h+=`<div class="field" data-fid="${f.id}"><label class="q">${f.q}${hint?` <button type="button" class="hintbtn" aria-label="подсказка">i</button>`:''}</label>${hint?`<div class="hint hide">${hint}</div>`:''}<div class="opts">`;
+      f.set.forEach((o,i)=>{ h+=`<label class="opt"><input type="radio" name="${f.id}" value="${o}" id="${f.id}_${i}"><span>${o}</span></label>`; });
+      h+=`</div></div>`;
+    });
+    p.innerHTML=h;
+    form.appendChild(p);
+  });
+  const dxp=document.createElement("div");
+  dxp.className="panel dx-panel full";
+  let dh=`<div class="ttl">Предварительная диагностическая гипотеза <span class="badge">главный пункт</span></div><div class="field" data-fid="dx"><label class="q" style="margin-bottom:4px">Диагноз <button type="button" class="hintbtn" aria-label="подсказка">i</button></label><div class="hint hide">${HINTS.dx}</div><div class="opts dx-opts">`;
+  DX.forEach((o,i)=>{ dh+=`<label class="opt"><input type="radio" name="dx" value="${o}" id="dx_${i}"><span>${o}</span></label>`; });
+  dh+=`</div></div>`;
+  dxp.innerHTML=dh;
+  form.appendChild(dxp);
+}
+buildForm();
+
+form.addEventListener("click",e=>{
+  const b=e.target.closest(".hintbtn");
+  if(!b) return;
+  e.preventDefault();
+  const hint=b.closest(".field").querySelector(".hint");
+  if(hint) hint.classList.toggle("hide");
+});
+
+Object.keys(SCEN).forEach(k=>{
+  const o=document.createElement("option");
+  o.value=k; o.textContent=`Сценарий ${k} · ${SCEN[k].dx}`;
+  picker.appendChild(o);
+});
+
+function setExam(on){
+  examMode=on;
+  document.getElementById("examBanner").classList.toggle("hide", !on);
+  picker.classList.toggle("hide", on);
+}
+
+function allFieldDefs(){ const a=[]; FIELDS.forEach(g=>g.items.forEach(f=>a.push(f))); a.push({id:"dx"}); return a; }
+
+function renderClin(){
+  const s=SCEN[current];
+  const show=document.getElementById("showClin").checked;
+  const clin=document.getElementById("clin");
+  clin.classList.toggle("hide", !show);
+  if(!show){ clin.innerHTML=""; return; }
+  clin.innerHTML=`
+    <h3>Пациент: Иванов Иван Иванович, 35 лет · приёмное отделение</h3>
+    <div class="row"><span><b>Жалобы:</b> ${s.comp}</span></div>
+    <div class="findings"><p>${s.find}</p></div>`;
+}
+document.getElementById("showClin").addEventListener("change",renderClin);
+
+function clearForm(){
+  form.querySelectorAll("input").forEach(i=>i.checked=false);
+  form.querySelectorAll(".opt").forEach(o=>o.classList.remove("good","bad","miss"));
+}
+
+function renderLearn(){
+  const s=SCEN[current];
+  document.getElementById("learnBox").innerHTML=`
+    <div class="lb-h">Разбор · ${s.dx}</div>
+    <div class="lb-row"><b>4 переключателя:</b> ${s.hook||""}</div>
+    <div class="lb-row"><b>Логика диагноза:</b> ${s.why}</div>
+    ${s.note?`<div class="lb-row"><b>Особенность:</b> ${s.note}</div>`:""}
+    <div class="lb-tip">Форма заполнена эталонно (зелёным). Нажми «i» рядом с любым полем — подсказка, почему так и как запомнить.</div>`;
+}
+function applyLearn(){
+  const s=SCEN[current], key=s.ans;
+  form.querySelectorAll(".opt").forEach(o=>o.classList.remove("good","bad","miss"));
+  allFieldDefs().forEach(f=>{
+    const correct=(f.id==="dx")?s.dx:key[f.id];
+    const fieldEl=form.querySelector(`.field[data-fid="${f.id}"]`);
+    fieldEl.querySelectorAll(".opt").forEach(o=>{
+      const inp=o.querySelector("input");
+      if(inp.value===correct){ inp.checked=true; o.classList.add("good"); } else inp.checked=false;
+    });
+  });
+  form.classList.add("locked","graded");
+  renderLearn();
+  document.getElementById("learnBox").classList.remove("hide");
+}
+function unLearn(){
+  form.classList.remove("locked","graded");
+  document.getElementById("learnBox").classList.add("hide");
+  clearForm();
+}
+function setLearn(on){
+  learnMode=on;
+  document.getElementById("learn").classList.toggle("active", on);
+  if(on){
+    setExam(false);
+    document.getElementById("result").innerHTML="";
+    document.getElementById("score").textContent="";
+    document.getElementById("showClin").checked=true; renderClin();
+    applyLearn();
+    window.scrollTo({top:0,behavior:"smooth"});
+  } else unLearn();
+}
+
+function loadScene(n){
+  current=+n;
+  picker.value=n;
+  clearForm();
+  document.getElementById("result").innerHTML="";
+  document.getElementById("score").textContent="";
+  form.classList.remove("graded");
+  renderClin();
+  if(learnMode) applyLearn();
+}
+
+function getVal(fid){ const e=form.querySelector(`input[name="${fid}"]:checked`); return e?e.value:null; }
+
+function check(){
+  if(learnMode){ learnMode=false; document.getElementById("learn").classList.remove("active"); form.classList.remove("locked"); document.getElementById("learnBox").classList.add("hide"); }
+  const s=SCEN[current], key=s.ans;
+  let total=0, ok=0; const wrong=[];
+  form.querySelectorAll(".opt").forEach(o=>o.classList.remove("good","bad","miss"));
+  form.classList.add("graded");
+
+  allFieldDefs().forEach(f=>{
+    total++;
+    const correct=(f.id==="dx")?s.dx:key[f.id];
+    const q=(f.id==="dx")?"Диагноз":f.q;
+    const fieldEl=form.querySelector(`.field[data-fid="${f.id}"]`);
+    const chosen=getVal(f.id);
+    fieldEl.querySelectorAll(".opt").forEach(o=>{
+      const val=o.querySelector("input").value;
+      const isChosen=o.querySelector("input").checked;
+      if(isChosen && val===correct) o.classList.add("good");
+      else if(isChosen && val!==correct) o.classList.add("bad");
+      else if(!isChosen && val===correct) o.classList.add("miss");
+    });
+    if(chosen===correct) ok++; else wrong.push({q, you:chosen||"— (пусто)", need:correct});
+  });
+
+  if(examMode) setExam(false);
+  const pct=Math.round(ok/total*100);
+  const scoreEl=document.getElementById("score");
+  scoreEl.className="score"+(pct<80?" bad":"");
+  scoreEl.innerHTML=`Верно: <b>${ok}/${total}</b> · ${pct}%`;
+
+  const dxOk=getVal("dx")===s.dx;
+  const res=document.getElementById("result");
+  res.innerHTML=`
+    <div class="result">
+      <div class="head ${dxOk&&wrong.length===0?'ok':'no'}">
+        ${dxOk?'✓ Диагноз верный':'✗ Диагноз неверный'} — ${s.dx}
+        ${wrong.length===0?' · форма заполнена безупречно':` · ошибок в форме: ${wrong.length}`}
+      </div>
+      <div class="body">
+        ${wrong.length? `<div>Разбор ошибок:</div><ul>${wrong.map(w=>`<li><b>${w.q}:</b> ваш ответ — <i>${w.you}</i>; правильно — <i>${w.need}</i></li>`).join("")}</ul>`:`<div>Все поля совпали с эталоном. Отлично.</div>`}
+        <div class="reason"><b>Логика диагноза.</b> ${s.why}</div>
+        ${s.note?`<div class="reason" style="border-top-style:solid;border-top-color:var(--gold)"><b style="color:var(--gold)">Особенность.</b> ${s.note}</div>`:""}
+      </div>
+    </div>`;
+  res.scrollIntoView({behavior:"smooth",block:"nearest"});
+}
+
+/* wiring */
+document.getElementById("learn").onclick=()=>setLearn(!learnMode);
+document.getElementById("check").onclick=check;
+document.getElementById("check2").onclick=check;
+document.getElementById("reset").onclick=()=>loadScene(current);
+document.getElementById("exam").onclick=()=>{
+  setLearn(false);
+  const keys=Object.keys(SCEN); let n;
+  do{ n=keys[Math.floor(Math.random()*keys.length)]; }while(+n===current&&keys.length>1);
+  setExam(false);
+  loadScene(n);
+  document.getElementById("showClin").checked=true; renderClin();
+  setExam(true);
+  window.scrollTo({top:0,behavior:"smooth"});
+};
+document.getElementById("random").onclick=()=>{
+  setExam(false);
+  const keys=Object.keys(SCEN); let n;
+  do{ n=keys[Math.floor(Math.random()*keys.length)]; }while(+n===current&&keys.length>1);
+  loadScene(n);
+};
+document.getElementById("next").onclick=()=>{
+  setExam(false);
+  const keys=Object.keys(SCEN).map(Number);
+  const idx=keys.indexOf(current);
+  loadScene(keys[(idx+1)%keys.length]);
+};
+picker.onchange=e=>{ setExam(false); loadScene(e.target.value); };
+
+loadScene(1);
+</script>
+</body>
+</html>

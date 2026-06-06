@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Тренажёр · Заключение ССС · ОСКЭ</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Spline+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#1c2330;
+    --paper:#f4efe6;
+    --paper2:#ece4d6;
+    --line:#c9bda6;
+    --teal:#165e62;
+    --teal-d:#0e3f42;
+    --ox:#8c2b22;
+    --ox-l:#b8392c;
+    --gold:#b9892e;
+    --green:#2e6b3e;
+    --green-bg:#e2efe1;
+    --red:#9c2b22;
+    --red-bg:#f5e1de;
+    --muted:#6c6354;
+    --shadow:0 1px 0 rgba(0,0,0,.04), 0 12px 28px -18px rgba(28,35,48,.45);
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    background:
+      radial-gradient(120% 80% at 80% -10%, rgba(22,94,98,.07), transparent 60%),
+      radial-gradient(90% 70% at -10% 110%, rgba(140,43,34,.06), transparent 60%),
+      var(--paper);
+    color:var(--ink);
+    font-family:"Spline Sans", system-ui, sans-serif;
+    line-height:1.5;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:1080px;margin:0 auto;padding:32px 22px 80px}
+  header.top{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:14px;border-bottom:2px solid var(--ink);padding-bottom:16px}
+  .brand h1{font-family:"Fraunces",serif;font-weight:600;font-size:clamp(26px,4vw,40px);line-height:1.02;margin:0;letter-spacing:-.01em}
+  .brand .sub{color:var(--muted);font-size:13px;margin-top:6px;letter-spacing:.02em;text-transform:uppercase}
+  .kicker{font-family:"Fraunces",serif;font-style:italic;color:var(--teal);font-size:15px}
+
+  .controls{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:22px 0 8px}
+  select,button{font-family:inherit;font-size:14px}
+  .sel{
+    appearance:none;background:var(--paper);border:1.5px solid var(--ink);border-radius:2px;
+    padding:9px 34px 9px 12px;color:var(--ink);cursor:pointer;font-weight:500;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%231c2330' stroke-width='1.5' fill='none'/%3E%3C/svg%3E");
+    background-repeat:no-repeat;background-position:right 12px center;min-width:220px;
+  }
+  .btn{border:1.5px solid var(--ink);background:var(--ink);color:var(--paper);padding:9px 16px;border-radius:2px;cursor:pointer;font-weight:600;letter-spacing:.01em;transition:transform .08s ease,background .15s}
+  .btn:hover{transform:translateY(-1px)}
+  .btn:active{transform:translateY(0)}
+  .btn.ghost{background:transparent;color:var(--ink)}
+  .btn.teal{background:var(--teal);border-color:var(--teal)}
+  .btn.ox{background:var(--ox);border-color:var(--ox)}
+
+  .scenebar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:6px;font-size:13px;color:var(--muted)}
+  .toggle{display:inline-flex;align-items:center;gap:7px;cursor:pointer;user-select:none}
+  .toggle input{display:none}
+  .toggle .dot{width:36px;height:20px;border-radius:20px;background:var(--line);position:relative;transition:.18s}
+  .toggle .dot:after{content:"";position:absolute;top:2px;left:2px;width:16px;height:16px;border-radius:50%;background:var(--paper);transition:.18s}
+  .toggle input:checked + .dot{background:var(--teal)}
+  .toggle input:checked + .dot:after{transform:translateX(16px)}
+
+  /* clinical picture card */
+  .clin{margin:18px 0;border:1.5px solid var(--line);border-left:5px solid var(--teal);background:linear-gradient(180deg,#fbf7ef,#f4efe6);border-radius:3px;padding:16px 18px;box-shadow:var(--shadow)}
+  .clin h3{margin:0 0 8px;font-family:"Fraunces",serif;font-size:18px;color:var(--teal-d)}
+  .clin .row{display:flex;flex-wrap:wrap;gap:6px 18px;font-size:14px}
+  .clin .row b{font-weight:600}
+  .vital{display:inline-flex;gap:5px;align-items:baseline;padding:2px 9px;background:var(--paper2);border:1px solid var(--line);border-radius:2px;font-variant-numeric:tabular-nums}
+  .findings{margin-top:10px;font-size:14.5px;line-height:1.6}
+  .findings p{margin:6px 0}
+  .hide{display:none !important}
+
+  /* form */
+  .grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-top:8px}
+  @media(max-width:760px){.grid{grid-template-columns:1fr}}
+  .panel{border:1.5px solid var(--line);background:var(--paper);border-radius:3px;padding:14px 15px;box-shadow:var(--shadow)}
+  .panel.full{grid-column:1/-1}
+  .panel .ttl{font-family:"Fraunces",serif;font-weight:600;font-size:15px;color:var(--ink);border-bottom:1px solid var(--line);padding-bottom:7px;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center}
+  .panel .ttl .badge{font-family:"Spline Sans";font-size:11px;font-weight:600;color:var(--teal);text-transform:uppercase;letter-spacing:.05em}
+  .field{margin:10px 0}
+  .field > label.q{display:block;font-size:13px;font-weight:600;color:var(--muted);margin-bottom:5px}
+  .opts{display:flex;flex-wrap:wrap;gap:6px}
+  .opt{position:relative}
+  .opt input{position:absolute;opacity:0;inset:0;cursor:pointer}
+  .opt span{display:inline-block;border:1.4px solid var(--line);border-radius:2px;padding:5px 10px;font-size:13px;cursor:pointer;background:var(--paper);transition:.12s;line-height:1.25}
+  .opt input:checked + span{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+  .opt input:focus-visible + span{outline:2px solid var(--gold);outline-offset:1px}
+  /* grading states */
+  .opt.correct-should input:checked + span,
+  .opt.correct-should span.markwrap{}
+  .graded .opt span{cursor:default}
+  .opt.good input:checked + span{background:var(--green);border-color:var(--green);color:#fff}
+  .opt.bad input:checked + span{background:var(--red);border-color:var(--red);color:#fff;text-decoration:line-through}
+  .opt.miss span{border-color:var(--green);border-style:dashed;color:var(--green);font-weight:600;box-shadow:inset 0 0 0 1px var(--green)}
+  .opt.miss span:after{content:" ✓ верно";font-size:11px;opacity:.85}
+
+  .dx-panel{grid-column:1/-1;border-left:5px solid var(--ox)}
+  .dx-opts{display:grid;grid-template-columns:repeat(2,1fr);gap:6px}
+  @media(max-width:620px){.dx-opts{grid-template-columns:1fr}}
+
+  .actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:22px;align-items:center}
+  .score{margin-left:auto;font-family:"Fraunces",serif;font-size:20px;font-weight:600}
+  .score b{color:var(--teal)}
+  .score.bad b{color:var(--ox)}
+
+  .result{margin-top:18px;border:1.5px solid var(--line);border-radius:3px;overflow:hidden;box-shadow:var(--shadow)}
+  .result .head{padding:12px 16px;font-family:"Fraunces",serif;font-size:17px;font-weight:600}
+  .result .head.ok{background:var(--green-bg);color:var(--green);border-bottom:1px solid #cfe0cd}
+  .result .head.no{background:var(--red-bg);color:var(--red);border-bottom:1px solid #ecccc6}
+  .result .body{padding:14px 16px;background:var(--paper);font-size:14px}
+  .result ul{margin:6px 0 0;padding-left:20px}
+  .result li{margin:4px 0}
+  .result .reason{margin-top:12px;padding-top:12px;border-top:1px dashed var(--line);color:var(--ink)}
+  .result .reason b{color:var(--teal-d)}
+
+  .legend{font-size:12px;color:var(--muted);margin-top:14px;display:flex;gap:16px;flex-wrap:wrap}
+  .legend i{font-style:normal;display:inline-flex;align-items:center;gap:6px}
+  .sw{width:13px;height:13px;border-radius:2px;display:inline-block}
+  .note{margin-top:18px;font-size:12.5px;color:var(--muted);background:var(--paper2);border:1px solid var(--line);border-radius:3px;padding:10px 12px}
+  .exam-banner{margin:16px 0 0;background:linear-gradient(90deg,var(--ox),var(--ox-l));color:#fff;border-radius:3px;padding:11px 15px;font-weight:600;font-size:14px;box-shadow:var(--shadow);letter-spacing:.01em}
+
+  .cheat{margin-top:16px;border:1.5px solid var(--line);border-radius:3px;background:var(--paper);box-shadow:var(--shadow);overflow:hidden}
+  .cheat summary{cursor:pointer;list-style:none;padding:11px 15px;font-family:"Fraunces",serif;font-weight:600;font-size:15px;color:var(--teal-d);background:var(--paper2);user-select:none;display:flex;align-items:center;gap:8px}
+  .cheat summary::-webkit-details-marker{display:none}
+  .cheat summary:after{content:"▸";margin-left:auto;transition:transform .18s;color:var(--teal)}
+  .cheat[open] summary:after{transform:rotate(90deg)}
+  .cheat-body{padding:12px 15px;display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+  @media(max-width:680px){.cheat-body{grid-template-columns:1fr}}
+  .cheat-group{border:1px solid var(--line);border-radius:2px;padding:8px 10px;background:linear-gradient(180deg,#fbf7ef,#f4efe6)}
+  .cheat-h{font-weight:700;font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--ox);border-bottom:1px solid var(--line);padding-bottom:5px;margin-bottom:6px;display:flex;justify-content:space-between;align-items:baseline}
+  .cheat-h span{font-weight:500;font-size:10.5px;text-transform:none;letter-spacing:0;color:var(--muted)}
+  .cheat-row{font-size:13px;line-height:1.5;padding:1px 0}
+  .cheat-row b{display:inline-block;min-width:58px;font-variant-numeric:tabular-nums;color:var(--ink);background:var(--paper2);border:1px solid var(--line);border-radius:2px;padding:0 5px;margin-right:6px;text-align:center}
+  .cheat-row i{color:var(--muted);font-size:12px}
+  .cheat-tip{grid-column:1/-1;font-size:12.5px;color:var(--teal-d);border-top:1px dashed var(--line);padding-top:10px;margin-top:2px}
+
+  .btn.active{background:var(--teal);border-color:var(--teal);color:#fff}
+  .hintbtn{display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;border-radius:50%;border:1.3px solid var(--teal);color:var(--teal);background:transparent;font-size:11px;font-weight:700;font-family:"Fraunces",serif;cursor:pointer;line-height:1;padding:0;vertical-align:middle}
+  .hintbtn:hover{background:var(--teal);color:#fff}
+  .hint{margin:6px 0 2px;font-size:12.5px;line-height:1.5;color:var(--teal-d);background:#eef3ee;border-left:3px solid var(--teal);border-radius:2px;padding:7px 10px}
+  .locked .opt input{pointer-events:none}
+  .locked .opt span{cursor:default}
+  .learn-box{margin:16px 0 0;border:1.5px solid var(--teal);border-left:5px solid var(--teal);border-radius:3px;background:linear-gradient(180deg,#eef4ef,#e6eee6);padding:14px 16px;box-shadow:var(--shadow)}
+  .learn-box .lb-h{font-family:"Fraunces",serif;font-weight:600;font-size:18px;color:var(--teal-d);margin-bottom:8px}
+  .learn-box .lb-row{font-size:14px;line-height:1.55;margin:5px 0}
+  .learn-box .lb-row b{color:var(--teal-d)}
+  .learn-box .lb-tip{margin-top:10px;padding-top:9px;border-top:1px dashed var(--teal);font-size:12.5px;color:var(--muted)}
+  footer{margin-top:36px;color:var(--muted);font-size:12px;border-top:1px solid var(--line);padding-top:14px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <div class="brand">
+      <div class="kicker">ОСКЭ · второй этап аккредитации</div>
+      <h1>Заключение по физикальному<br>обследованию ССС</h1>
+      <div class="sub">Тренажёр заполнения формы · 10 сценариев</div>
+    </div>
+  </header>
+
+  <div class="controls">
+    <button class="btn" id="learn">📘 Обучение</button>
+    <button class="btn ox" id="exam">🎓 Зачёт</button>
+    <select id="picker" class="sel"></select>
+    <button class="btn teal" id="random">🎲 Случайный сценарий</button>
+    <button class="btn ghost" id="check">Проверить</button>
+    <button class="btn ghost" id="reset">Сбросить</button>
+  </div>
+  <div id="examBanner" class="exam-banner hide">🎓 Режим зачёта · диагноз скрыт — заполните заключение и определите диагноз по данным осмотра. Раскроется после проверки.</div>
+  <div class="scenebar">
+    <label class="toggle"><input type="checkbox" id="showClin" checked><span class="dot"></span></label>
+    <span>Показывать клиническую картину</span>
+    <span style="opacity:.5">·</span>
+    <span>Режим экзамена = выключите тумблер и определяйте по памяти</span>
+  </div>
+
+  <details id="cheatBP" class="cheat">
+    <summary>🩺 Шпаргалка: АД → диагноз (по диастолическому)</summary>
+    <div class="cheat-body">
+      <div class="cheat-group">
+        <div class="cheat-h">Диастола 35 <span>одиночка</span></div>
+        <div class="cheat-row"><b>160/35</b> Недостаточность аортального клапана <i>— самое широкое пульсовое</i></div>
+      </div>
+      <div class="cheat-group">
+        <div class="cheat-h">Диастола 60 <span>одиночка</span></div>
+        <div class="cheat-row"><b>100/60</b> ДМЖП</div>
+      </div>
+      <div class="cheat-group">
+        <div class="cheat-h">Диастола 70 <span>различай по систоле</span></div>
+        <div class="cheat-row"><b>90/70</b> Митральный стеноз + трикусп. недостаточность <i>(самое низкое сист.)</i></div>
+        <div class="cheat-row"><b>110/70</b> Недостаточность трикуспидального клапана</div>
+        <div class="cheat-row"><b>120/70</b> Норма</div>
+      </div>
+      <div class="cheat-group">
+        <div class="cheat-h">Диастола 80 <span>лесенка систолы +10</span></div>
+        <div class="cheat-row"><b>100/80</b> Стеноз аортального клапана <i>(узкое пульсовое)</i></div>
+        <div class="cheat-row"><b>110/80</b> Стеноз лёгочного ствола</div>
+        <div class="cheat-row"><b>120/80</b> ДМПП <i>(«ложная норма»)</i></div>
+        <div class="cheat-row"><b>130/80</b> Недостаточность митрального клапана (хрон.)</div>
+        <div class="cheat-row"><b>140/80</b> Острая недостаточность митрального клапана</div>
+      </div>
+      <div class="cheat-tip">Сначала смотри диастолу: 35 → АН, 60 → ДМЖП. Остаются 70 и 80 — внутри них каждое систолическое уникально.</div>
+    </div>
+  </details>
+
+  <div id="clin" class="clin"></div>
+
+  <div id="learnBox" class="learn-box hide"></div>
+
+  <form id="form" class="grid"></form>
+
+  <div class="actions">
+    <button class="btn teal" id="check2">Проверить заключение</button>
+    <button class="btn ox" id="next">Следующий сценарий →</button>
+    <div class="score" id="score"></div>
+  </div>
+
+  <div class="legend">
+    <i><span class="sw" style="background:var(--green)"></span> верно отмечено</i>
+    <i><span class="sw" style="background:var(--red)"></span> лишнее / ошибка</i>
+    <i><span class="sw" style="border:1.5px dashed var(--green)"></span> пропущено (нужно было)</i>
+  </div>
+
+  <div id="result"></div>
+
+  <footer>
+    Данные сценариев — Приложение 1 паспорта станции «Физикальное обследование пациента (ССС)»,
+    Методический центр аккредитации специалистов, 2023. Учебный тренажёр.
+  </footer>
+</div>
+
+<script>
+/* ---------- option sets ---------- */
+const LOC = ["нет","норма","смещён латерально и вниз"];
+const FRM = ["нет","норма (локализованный)","усиленный","продолжительный","IV тон, продолжительный верхушечный толчок, III тон"];
+const YN = ["да","нет"];
+const SYM = ["симметричный","несимметричный"];
+const MUR = ["нет","систолический","диастолический","систоло-диастолический","систолический, усиливающийся на вдохе"];
+const EXT = ["нет","тон изгнания","расщепление тона","III тон","IV тон","тон открытия"];
+const IRR = ["нет","подмышечная область","сосуды шеи"];
+const BR  = ["везикулярное","жёсткое","бронхиальное"];
+const PAT = ["нет","сухие свистящие хрипы","влажные хрипы во время вдоха и выдоха","шум трения плевры","влажные хрипы во время вдоха и сухие во время выдоха","влажные хрипы во время вдоха"];
+const DX = ["Недостаточность митрального клапана","Недостаточность трикуспидального клапана","Стеноз аортального клапана","Норма","Недостаточность аортального клапана","Стеноз легочного ствола","Митральный стеноз с трикуспидальной недостаточностью","Острая недостаточность митрального клапана","Дефект межпредсердной перегородки","Дефект межжелудочковой перегородки"];
+
+/* fields: id, label, set, multi? */
+const FIELDS = [
+  {sec:"Верхушечный / сердечный толчок", items:[
+    {id:"loc",   q:"Пальпация верхушечного толчка — локализация", set:LOC},
+    {id:"frm",   q:"Пальпация верхушечного толчка — форма",        set:FRM},
+    {id:"serd",  q:"Пульсация сердечного толчка пальпаторно",      set:YN},
+    {id:"def",   q:"Дефицит пульса",                                set:YN},
+  ]},
+  {sec:"Магистральные сосуды и пульс", items:[
+    {id:"magL",  q:"Пульсация магистр. сосудов — 2-е м.р. слева",  set:YN},
+    {id:"magR",  q:"Пульсация магистр. сосудов — 2-е м.р. справа", set:YN},
+    {id:"rad",   q:"Симметричность пульса на лучевых артериях",    set:SYM},
+    {id:"fem",   q:"Симметричность пульса на бедренных артериях",  set:SYM},
+    {id:"coa",   q:"Признаки коарктации аорты",                    set:YN},
+  ]},
+  {sec:"Аортальный клапан", items:[
+    {id:"ao_m",  q:"Шум (фаза)",          set:MUR},
+    {id:"ao_t",  q:"Дополнительные тоны", set:EXT, multi:true},
+  ]},
+  {sec:"Пульмональный клапан", items:[
+    {id:"pu_m",  q:"Шум (фаза)",          set:MUR},
+    {id:"pu_t",  q:"Дополнительные тоны", set:EXT, multi:true},
+  ]},
+  {sec:"Трикуспидальный клапан", items:[
+    {id:"tr_m",  q:"Шум (фаза)",          set:MUR},
+    {id:"tr_t",  q:"Дополнительные тоны", set:EXT, multi:true},
+  ]},
+  {sec:"Митральный клапан", items:[
+    {id:"mi_m",  q:"Шум (фаза)",          set:MUR},
+    {id:"mi_t",  q:"Дополнительные тоны", set:EXT, multi:true},
+  ]},
+  {sec:"Лёгкие и иррадиация", items:[
+    {id:"irr",   q:"Иррадиация шума в другие области", set:IRR},
+    {id:"breath",q:"Основной дыхательный шум",          set:BR},
+    {id:"path",  q:"Патологические дыхательные шумы",    set:PAT},
+  ]},
+];
+
+/* ---------- answer key (from Приложение 1) ---------- */
+const M = (...a)=>a;            // murmur(single→[x]) / extra tones array
+const SCEN = {
+ 1:{dx:"Недостаточность митрального клапана",
+    vit:{bp:"130/80",hr:70,rr:16,jv:"в норме",ed:"нет",skin:"норм. окраски",cap:"отрицательный"},
+    ans:{loc:"норма",frm:"норма (локализованный)",serd:"нет",def:"нет",magL:"нет",magR:"нет",rad:"симметричный",fem:"симметричный",coa:"нет",
+      ao_m:M("нет"),ao_t:M("нет"),pu_m:M("нет"),pu_t:M("расщепление тона"),tr_m:M("нет"),tr_t:M("нет"),mi_m:M("систолический"),mi_t:M("III тон"),
+      irr:"нет",breath:"везикулярное",path:"нет"},
+    find:`Систолический шум с максимумом на <b>верхушке (митральная точка)</b>, там же <b>III тон</b>. На лёгочной артерии — расщепление II тона. Толчки и магистральные сосуды без особенностей. Лёгкие чистые.`,
+    why:"Систолический шум на верхушке + III тон, гемодинамика спокойная (вены, отёки, АД в норме) → хроническая митральная недостаточность."},
+ 2:{dx:"Недостаточность трикуспидального клапана",
+    vit:{bp:"110/70",hr:70,rr:16,jv:"в норме",ed:"нет",skin:"норм. окраски",cap:"отрицательный"},
+    ans:{loc:"норма",frm:"норма (локализованный)",serd:"нет",def:"нет",magL:"нет",magR:"нет",rad:"симметричный",fem:"симметричный",coa:"нет",
+      ao_m:M("нет"),ao_t:M("нет"),pu_m:M("нет"),pu_t:M("расщепление тона"),tr_m:M("систолический, усиливающийся на вдохе"),tr_t:M("нет"),mi_m:M("нет"),mi_t:M("нет"),
+      irr:"нет",breath:"везикулярное",path:"нет"},
+    find:`На <b>трикуспидальной точке (IV м.р. слева у грудины)</b> — систолический шум, <b>усиливающийся на вдохе</b> (симптом Риверо-Корвальо). На пульмональной точке — расщепление II тона. В остальном норма.`,
+    why:"Систолический шум, усиливающийся на вдохе, в трикуспидальной точке — патогномоничен для недостаточности трёхстворчатого клапана."},
+ 3:{dx:"Стеноз аортального клапана",
+    vit:{bp:"100/80",hr:70,rr:16,jv:"в норме",ed:"нет",skin:"бледные",cap:"отрицательный",comp:"боль в груди, обмороки"},
+    ans:{loc:"норма",frm:"норма (локализованный)",serd:"нет",def:"нет",magL:"нет",magR:"нет",rad:"симметричный",fem:"симметричный",coa:"нет",
+      ao_m:M("систолический"),ao_t:M("нет"),pu_m:M("систолический"),pu_t:M("нет"),tr_m:M("систолический"),tr_t:M("нет"),mi_m:M("систолический"),mi_t:M("нет"),
+      irr:"сосуды шеи",breath:"везикулярное",path:"нет"},
+    find:`Систолический шум во всех точках с максимумом на <b>аорте (2 м.р. справа)</b>, <b>иррадиация на сосуды шеи</b>. Малое пульсовое давление (100/80), бледность, синкопе/стенокардия в жалобах.`,
+    why:"Грубый систолический шум с эпицентром над аортой + проведение на сонные + малое пульсовое АД и обмороки → аортальный стеноз."},
+ 4:{dx:"Норма",
+    vit:{bp:"120/70",hr:70,rr:16,jv:"в норме",ed:"нет",skin:"норм. окраски",cap:"отрицательный"},
+    ans:{loc:"норма",frm:"норма (локализованный)",serd:"нет",def:"нет",magL:"нет",magR:"нет",rad:"симметричный",fem:"симметричный",coa:"нет",
+      ao_m:M("нет"),ao_t:M("нет"),pu_m:M("нет"),pu_t:M("расщепление тона"),tr_m:M("нет"),tr_t:M("нет"),mi_m:M("нет"),mi_t:M("III тон"),
+      irr:"нет",breath:"везикулярное",path:"нет"},
+    find:`Шумов нет. Физиологическое расщепление II тона на пульмональной точке и III тон на верхушке. Все показатели в пределах нормы.`,
+    why:"Шумов нет; расщепление II тона и III тон — физиологические варианты у молодых. Заключение — норма."},
+ 5:{dx:"Недостаточность аортального клапана",
+    vit:{bp:"160/35",hr:70,rr:16,jv:"в норме",ed:"да",skin:"норм. окраски",cap:"положительный",comp:"одышка, усталость"},
+    ans:{loc:"смещён латерально и вниз",frm:"норма (локализованный)",serd:"нет",def:"нет",magL:"нет",magR:"нет",rad:"симметричный",fem:"симметричный",coa:"нет",
+      ao_m:M("систоло-диастолический"),ao_t:M("тон изгнания"),pu_m:M("диастолический"),pu_t:M("нет"),tr_m:M("диастолический"),tr_t:M("нет"),mi_m:M("диастолический"),mi_t:M("нет"),
+      irr:"нет",breath:"везикулярное",path:"нет"},
+    find:`<b>Высокое пульсовое давление 160/35</b>, <b>положительный капиллярный пульс</b> (симптом Квинке). Верхушечный толчок <b>смещён латерально и вниз</b>. На аорте — систолический + диастолический шум, тон изгнания; диастолический шум проводится по левому краю грудины (пульмональная, трикуспидальная, митральная точки).`,
+    why:"Диастолический шум по левому краю грудины + высокое пульсовое АД (160/35) + капиллярный пульс + смещение верхушки → аортальная недостаточность.",
+    note:"В паспорте шум на аорте записан как «систолический и диастолический» (два отдельных шума). На форме с одиночным выбором это закодировано единственным вариантом «систоло-диастолический» — его и нужно отметить."},
+ 6:{dx:"Стеноз легочного ствола",
+    vit:{bp:"110/80",hr:70,rr:16,jv:"набухшие",ed:"нет",skin:"цианотичные",cap:"отрицательный",comp:"одышка, усталость, обмороки"},
+    ans:{loc:"нет",frm:"нет",serd:"да",def:"нет",magL:"нет",magR:"нет",rad:"симметричный",fem:"симметричный",coa:"нет",
+      ao_m:M("систолический"),ao_t:M("нет"),pu_m:M("систолический"),pu_t:M("тон изгнания"),tr_m:M("систолический"),tr_t:M("нет"),mi_m:M("систолический"),mi_t:M("нет"),
+      irr:"нет",breath:"везикулярное",path:"нет"},
+    find:`Систолический шум с максимумом на <b>пульмональной точке (2 м.р. слева)</b> + <b>тон изгнания</b> там же. Пальпируется сердечный толчок (правый желудочек), вены шеи набухшие, цианоз.`,
+    why:"Систолический шум + тон изгнания над лёгочной артерией, признаки перегрузки правых отделов (сердечный толчок, набухшие вены, цианоз) → стеноз лёгочного ствола."},
+ 7:{dx:"Митральный стеноз с трикуспидальной недостаточностью",
+    vit:{bp:"90/70",hr:70,rr:16,jv:"набухшие",ed:"нет",skin:"бледные",cap:"отрицательный",comp:"одышка"},
+    ans:{loc:"нет",frm:"нет",serd:"да",def:"нет",magL:"да",magR:"нет",rad:"симметричный",fem:"симметричный",coa:"нет",
+      ao_m:M("нет"),ao_t:M("нет"),pu_m:M("нет"),pu_t:M("тон изгнания"),tr_m:M("систолический, усиливающийся на вдохе"),tr_t:M("нет"),mi_m:M("диастолический"),mi_t:M("тон открытия"),
+      irr:"нет",breath:"везикулярное",path:"влажные хрипы во время вдоха и сухие во время выдоха"},
+    find:`На <b>митральной точке — диастолический шум + тон открытия</b> (щелчок). На <b>трикуспидальной — систолический, усиливающийся на вдохе</b>. Сердечный толчок, пульсация лёгочной артерии (2 м.р. слева), набухшие вены. В лёгких — влажные хрипы на вдохе и сухие на выдохе.`,
+    why:"Диастолический шум + тон открытия на верхушке = митральный стеноз; присоединённый систолический шум, усиливающийся на вдохе, на трикуспидальной точке = трикуспидальная недостаточность."},
+ 8:{dx:"Острая недостаточность митрального клапана",
+    vit:{bp:"140/80",hr:70,rr:16,jv:"набухшие",ed:"нет",skin:"бледные, влажные",cap:"отрицательный",comp:"одышка 2 дня, усталость"},
+    ans:{loc:"норма",frm:"IV тон, продолжительный верхушечный толчок, III тон",serd:"да",def:"нет",magL:"нет",magR:"нет",rad:"симметричный",fem:"симметричный",coa:"нет",
+      ao_m:M("нет"),ao_t:M("нет"),pu_m:M("нет"),pu_t:M("расщепление тона"),tr_m:M("систолический"),tr_t:M("нет"),mi_m:M("систолический"),mi_t:M("III тон","IV тон"),
+      irr:"нет",breath:"везикулярное",path:"влажные хрипы во время вдоха и выдоха"},
+    find:`На <b>митральной точке — систолический шум + III и IV тоны</b>. Верхушечный толчок: <b>IV тон, продолжительный верхушечный толчок, III тон</b>. Сердечный толчок пальпируется, вены набухшие, кожа бледная и влажная. В лёгких — влажные хрипы на вдохе и выдохе (застой/отёк). Острое начало (2 дня).`,
+    why:"Систолический шум на верхушке + III и IV тоны + застой в лёгких + острое начало и набухшие вены → острая митральная недостаточность."},
+ 9:{dx:"Дефект межпредсердной перегородки",
+    vit:{bp:"120/80",hr:70,rr:16,jv:"в норме",ed:"нет",skin:"норм. окраски",cap:"отрицательный"},
+    ans:{loc:"нет",frm:"нет",serd:"да",def:"нет",magL:"да",magR:"нет",rad:"симметричный",fem:"симметричный",coa:"нет",
+      ao_m:M("нет"),ao_t:M("нет"),pu_m:M("систолический"),pu_t:M("расщепление тона"),tr_m:M("диастолический"),tr_t:M("нет"),mi_m:M("нет"),mi_t:M("нет"),
+      irr:"нет",breath:"везикулярное",path:"нет"},
+    find:`На <b>пульмональной точке — систолический шум + расщепление II тона</b> (фиксированное). На <b>трикуспидальной — диастолический шум</b> (усиление потока). Сердечный толчок, пульсация лёгочной артерии (2 м.р. слева). Самочувствие удовлетворительное.`,
+    why:"Систолический шум на лёгочной артерии + (фиксированное) расщепление II тона + диастолический шум на трикуспидальной точке (увеличенный сброс) → ДМПП."},
+ 10:{dx:"Дефект межжелудочковой перегородки",
+    vit:{bp:"100/60",hr:70,rr:16,jv:"в норме",ed:"нет",skin:"норм. окраски",cap:"отрицательный"},
+    ans:{loc:"норма",frm:"норма (локализованный)",serd:"нет",def:"нет",magL:"нет",magR:"нет",rad:"симметричный",fem:"симметричный",coa:"нет",
+      ao_m:M("нет"),ao_t:M("нет"),pu_m:M("систолический"),pu_t:M("расщепление тона"),tr_m:M("систолический"),tr_t:M("нет"),mi_m:M("систолический"),mi_t:M("нет"),
+      irr:"нет",breath:"везикулярное",path:"нет"},
+    find:`Грубый систолический шум с максимумом у <b>левого края грудины (трикуспидальная точка)</b>, проводится на пульмональную и митральную точки; на пульмональной — расщепление II тона. Верхушечный толчок локализованный, в норме.`,
+    why:"Грубый систолический шум вдоль левого края грудины, слышимый во многих точках, без иррадиации на шею, при сохранном верхушечном толчке → ДМЖП."},
+};
+
+/* ---------- per-field hints & memory hooks ---------- */
+const HINTS={
+  loc:"Локализация верхушечного толчка. Норма — V м.р. по среднеключичной линии. Смещение латерально и вниз = дилатация ЛЖ (объёмная перегрузка, классически — аортальная недостаточность).",
+  frm:"Характер толчка. «Локализованный» — норма. Продолжительный/разлитой + III–IV тоны = перегрузка и недостаточность ЛЖ (напр. острая митральная).",
+  serd:"Сердечный толчок (нижний левый край грудины) — пульсация правого желудочка. «Да» при перегрузке правых отделов: стеноз ЛС, ДМПП, МС, лёгочная гипертензия.",
+  def:"Дефицит пульса — ЧСС больше пульса на лучевой (часть систол не доходит). Бывает при фибрилляции предсердий. В этих сценариях — нет.",
+  magL:"Пульсация во 2 м.р. слева — ствол лёгочной артерии. «Да» при её расширении: стеноз ЛС, ДМПП (сброс в малый круг), МС.",
+  magR:"Пульсация во 2 м.р. справа — восходящая аорта. «Да» при расширении/аневризме аорты. В этих сценариях — нет.",
+  rad:"Симметричность пульса на лучевых. Во всех сценариях — симметричный.",
+  fem:"Симметричность пульса на бедренных. Во всех сценариях — симметричный.",
+  coa:"Коарктация аорты: запаздывание/ослабление бедренного пульса относительно лучевого, разница АД рука/нога. В этих сценариях — нет.",
+  murmur:"Фаза шума: одновременно пальпируй сонную/лучевую артерию. Шум совпадает с пульсовой волной → систолический; шум между ударами → диастолический. Усиление на вдохе → правые отделы (симптом Риверо-Корвальо).",
+  tones:"Добавочные тоны: тон изгнания — ранний систолический щелчок (стеноз полулунного клапана); тон открытия — ранний диастолический щелчок (митральный стеноз); III тон — ранний диастолический (объёмная перегрузка/СН); IV тон — пресистолический (жёсткий желудочек); расщепление II тона — норма либо фиксированное при ДМПП.",
+  irr:"Иррадиация шума: на сосуды шеи → аортальный стеноз; в подмышечную область → митральная недостаточность.",
+  breath:"Основной дыхательный шум. Во всех сценариях — везикулярный.",
+  path:"Патологические хрипы: влажные = застой/отёк лёгких (лево-желудочковая недостаточность, острая МН, митральный стеноз).",
+  dx:"Двухшаговый ключ: сначала диастолическое АД сужает круг (35 → АН, 60 → ДМЖП), затем систолическое и точка максимума шума уточняют диагноз."
+};
+const HOOKS={
+ 1:"«130 — хроника, мягко». Систолический на верхушке + III тон, гемодинамика спокойная.",
+ 2:"«…70 — тРикуспидальная». Систолический на трикуспидальной, усиливающийся на вдохе.",
+ 3:"«80 — Стеноз держит диастолу» → узкое пульсовое 100/80, иррадиация на шею, обмороки.",
+ 4:"Истинная норма — 120/70. Шумов нет, только физиологические расщепление II тона и III тон.",
+ 5:"«35 — кровь убегает обратно». Самое широкое пульсовое 160/35 + капиллярный пульс + смещение верхушки.",
+ 6:"«110/80 — лёгочный стеноЗ, 80». Систолический + тон изгнания на пульмональной, цианоз, сердечный толчок.",
+ 7:"Самое низкое 90/70. Диастолический + тон открытия на верхушке И систолический на вдохе на трикуспидальной.",
+ 8:"Единственное 140 — остро. Систолический на верхушке + III и IV тоны, отёк лёгких.",
+ 9:"«120/80 — ложная норма». Систолический на пульмональной + фикс. расщепление II тона + диастолический на трикуспидальной.",
+ 10:"«100/60 — ДМЖ, низкая диастола». Грубый систолический у левого края грудины, во многих точках."
+};
+function hintFor(id){ return HINTS[id] || (id.endsWith("_m")?HINTS.murmur : id.endsWith("_t")?HINTS.tones : ""); }
+
+/* ---------- build form ---------- */
+const form = document.getElementById("form");
+function buildForm(){
+  form.innerHTML="";
+  FIELDS.forEach(group=>{
+    const p=document.createElement("div");
+    p.className="panel";
+    let h=`<div class="ttl">${group.sec}</div>`;
+    group.items.forEach(f=>{
+      const hint=hintFor(f.id);
+      h+=`<div class="field" data-fid="${f.id}"><label class="q">${f.q}${f.multi?' <span style="color:var(--teal)">(можно несколько)</span>':''}${hint?` <button type="button" class="hintbtn" aria-label="подсказка">i</button>`:''}</label>${hint?`<div class="hint hide">${hint}</div>`:''}<div class="opts">`;
+      f.set.forEach((o,i)=>{
+        const type=f.multi?"checkbox":"radio";
+        const id=`${f.id}_${i}`;
+        h+=`<label class="opt"><input type="${type}" name="${f.id}" value="${o}" id="${id}"><span>${o}</span></label>`;
+      });
+      h+=`</div></div>`;
+    });
+    p.innerHTML=h;
+    form.appendChild(p);
+  });
+  // diagnosis panel
+  const dxp=document.createElement("div");
+  dxp.className="panel dx-panel full";
+  let dh=`<div class="ttl">Предварительная диагностическая гипотеза <span class="badge">главный пункт</span></div><div class="field" data-fid="dx"><label class="q" style="margin-bottom:4px">Диагноз <button type="button" class="hintbtn" aria-label="подсказка">i</button></label><div class="hint hide">${HINTS.dx}</div><div class="opts dx-opts">`;
+  DX.forEach((o,i)=>{ dh+=`<label class="opt"><input type="radio" name="dx" value="${o}" id="dx_${i}"><span>${o}</span></label>`; });
+  dh+=`</div></div>`;
+  dxp.innerHTML=dh;
+  form.appendChild(dxp);
+}
+buildForm();
+
+/* hint toggle (delegated) */
+form.addEventListener("click",e=>{
+  const b=e.target.closest(".hintbtn");
+  if(!b) return;
+  e.preventDefault();
+  const hint=b.closest(".field").querySelector(".hint");
+  if(hint) hint.classList.toggle("hide");
+});
+
+/* ---------- picker ---------- */
+const picker=document.getElementById("picker");
+Object.keys(SCEN).forEach(k=>{
+  const o=document.createElement("option");
+  o.value=k; o.textContent=`Сценарий ${k} · ${SCEN[k].dx}`;
+  picker.appendChild(o);
+});
+
+let current=1, graded=false, examMode=false, learnMode=false;
+
+function setExam(on){
+  examMode=on;
+  document.getElementById("examBanner").classList.toggle("hide", !on);
+  picker.classList.toggle("hide", on);
+}
+
+function allFieldDefs(){
+  const a=[]; FIELDS.forEach(g=>g.items.forEach(f=>a.push(f))); a.push({id:"dx"}); return a;
+}
+function renderLearn(){
+  const s=SCEN[current];
+  document.getElementById("learnBox").innerHTML=`
+    <div class="lb-h">Разбор · ${s.dx}</div>
+    <div class="lb-row"><b>АД-ключ:</b> ${s.vit.bp} — ${HOOKS[current]||""}</div>
+    <div class="lb-row"><b>Логика диагноза:</b> ${s.why}</div>
+    ${s.note?`<div class="lb-row"><b>Особенность ввода:</b> ${s.note}</div>`:""}
+    <div class="lb-tip">Форма заполнена эталонно (зелёным). Нажми «i» рядом с любым полем — подсказка, почему такой ответ и как его запомнить.</div>`;
+}
+function applyLearn(){
+  const s=SCEN[current], key=s.ans;
+  form.querySelectorAll(".opt").forEach(o=>o.classList.remove("good","bad","miss"));
+  allFieldDefs().forEach(f=>{
+    const correct=(f.id==="dx")?s.dx:key[f.id];
+    const corrArr=[].concat(correct);
+    const fieldEl=form.querySelector(`.field[data-fid="${f.id}"]`);
+    fieldEl.querySelectorAll(".opt").forEach(o=>{
+      const inp=o.querySelector("input");
+      if(corrArr.includes(inp.value)){ inp.checked=true; o.classList.add("good"); }
+      else inp.checked=false;
+    });
+  });
+  form.classList.add("locked","graded");
+  renderLearn();
+  document.getElementById("learnBox").classList.remove("hide");
+}
+function unLearn(){
+  form.classList.remove("locked","graded");
+  document.getElementById("learnBox").classList.add("hide");
+  clearForm();
+}
+function setLearn(on){
+  learnMode=on;
+  document.getElementById("learn").classList.toggle("active", on);
+  if(on){
+    setExam(false);
+    document.getElementById("result").innerHTML="";
+    document.getElementById("score").textContent="";
+    document.getElementById("showClin").checked=true; renderClin();
+    applyLearn();
+    window.scrollTo({top:0,behavior:"smooth"});
+  } else {
+    unLearn();
+  }
+}
+
+function loadScene(n){
+  current=+n; graded=false;
+  picker.value=n;
+  clearForm();
+  document.getElementById("result").innerHTML="";
+  document.getElementById("score").textContent="";
+  form.classList.remove("graded");
+  renderClin();
+  if(learnMode) applyLearn();
+}
+function renderClin(){
+  const s=SCEN[current], v=s.vit;
+  const show=document.getElementById("showClin").checked;
+  const clin=document.getElementById("clin");
+  clin.classList.toggle("hide", !show);
+  if(!show){ clin.innerHTML=""; return; }
+  clin.innerHTML=`
+    <h3>Пациент: Николаенко Николай Николаевич, 50 лет</h3>
+    <div class="row">
+      ${v.comp?`<span><b>Жалобы:</b> ${v.comp}</span>`:`<span><b>Самочувствие:</b> нормальное</span>`}
+      <span class="vital"><b>АД</b> ${v.bp}</span>
+      <span class="vital"><b>ЧСС</b> ${v.hr}</span>
+      <span class="vital"><b>ЧДД</b> ${v.rr}</span>
+      <span><b>Кожа:</b> ${v.skin}</span>
+      <span><b>Капиллярный пульс:</b> ${v.cap}</span>
+      <span><b>Вены шеи:</b> ${v.jv}</span>
+      <span><b>Отёки:</b> ${v.ed}</span>
+    </div>
+    <div class="findings"><p>${s.find}</p></div>`;
+}
+document.getElementById("showClin").addEventListener("change",renderClin);
+
+function clearForm(){
+  form.querySelectorAll("input").forEach(i=>i.checked=false);
+  form.querySelectorAll(".opt").forEach(o=>o.classList.remove("good","bad","miss"));
+}
+
+/* ---------- grading ---------- */
+function getVal(fid,multi){
+  const els=[...form.querySelectorAll(`input[name="${fid}"]:checked`)];
+  if(multi) return els.map(e=>e.value).sort();
+  return els.length?els[0].value:null;
+}
+function arrEq(a,b){a=[...a].sort();b=[...b].sort();return a.length===b.length&&a.every((x,i)=>x===b[i]);}
+
+function check(){
+  if(learnMode){ learnMode=false; document.getElementById("learn").classList.remove("active"); form.classList.remove("locked"); document.getElementById("learnBox").classList.add("hide"); }
+  const s=SCEN[current], key=s.ans;
+  let total=0, ok=0;
+  const wrong=[];
+  // reset visual
+  form.querySelectorAll(".opt").forEach(o=>o.classList.remove("good","bad","miss"));
+  form.classList.add("graded");
+
+  const allFields=[];
+  FIELDS.forEach(g=>g.items.forEach(f=>allFields.push(f)));
+  allFields.push({id:"dx",q:"Диагноз",set:DX});
+
+  allFields.forEach(f=>{
+    total++;
+    let correct = (f.id==="dx") ? s.dx : key[f.id];
+    const multi = !!f.multi;
+    const fieldEl=form.querySelector(`.field[data-fid="${f.id}"]`);
+    const opts=[...fieldEl.querySelectorAll(".opt")];
+    if(multi){
+      const corrArr=[].concat(correct);
+      const chosen=getVal(f.id,true);
+      opts.forEach(o=>{
+        const val=o.querySelector("input").value;
+        const isChosen=o.querySelector("input").checked;
+        const shouldBe=corrArr.includes(val);
+        if(isChosen && shouldBe) o.classList.add("good");
+        else if(isChosen && !shouldBe) o.classList.add("bad");
+        else if(!isChosen && shouldBe) o.classList.add("miss");
+      });
+      if(arrEq(chosen,corrArr)) ok++; else wrong.push({q:f.q, you:chosen.join(", ")||"— (пусто)", need:corrArr.join(", ")});
+    } else {
+      if(Array.isArray(correct)) correct=correct[0];
+      const chosen=getVal(f.id,false);
+      opts.forEach(o=>{
+        const val=o.querySelector("input").value;
+        const isChosen=o.querySelector("input").checked;
+        if(isChosen && val===correct) o.classList.add("good");
+        else if(isChosen && val!==correct) o.classList.add("bad");
+        else if(!isChosen && val===correct) o.classList.add("miss");
+      });
+      if(chosen===correct) ok++; else wrong.push({q:f.q, you:chosen||"— (пусто)", need:correct});
+    }
+  });
+
+  graded=true;
+  if(examMode) setExam(false);
+  const pct=Math.round(ok/total*100);
+  const scoreEl=document.getElementById("score");
+  scoreEl.className="score"+(pct<80?" bad":"");
+  scoreEl.innerHTML=`Верно: <b>${ok}/${total}</b> · ${pct}%`;
+
+  const dxOk = getVal("dx",false)===s.dx;
+  const res=document.getElementById("result");
+  res.innerHTML=`
+    <div class="result">
+      <div class="head ${dxOk&&wrong.length===0?'ok':'no'}">
+        ${dxOk?'✓ Диагноз верный':'✗ Диагноз неверный'} — ${s.dx}
+        ${wrong.length===0?' · форма заполнена безупречно':` · ошибок в форме: ${wrong.length}`}
+      </div>
+      <div class="body">
+        ${wrong.length? `<div>Разбор ошибок:</div><ul>${wrong.map(w=>`<li><b>${w.q}:</b> ваш ответ — <i>${w.you}</i>; правильно — <i>${w.need}</i></li>`).join("")}</ul>`:`<div>Все поля совпали с эталоном. Отлично.</div>`}
+        <div class="reason"><b>Логика диагноза.</b> ${s.why}</div>
+        ${s.note?`<div class="reason" style="border-top-style:solid;border-top-color:var(--gold)"><b style="color:var(--gold)">Особенность ввода.</b> ${s.note}</div>`:""}
+      </div>
+    </div>`;
+  res.scrollIntoView({behavior:"smooth",block:"nearest"});
+}
+
+/* ---------- wiring ---------- */
+document.getElementById("learn").onclick=()=>setLearn(!learnMode);
+document.getElementById("check").onclick=check;
+document.getElementById("check2").onclick=check;
+document.getElementById("reset").onclick=()=>loadScene(current);
+document.getElementById("exam").onclick=()=>{
+  setLearn(false);
+  const keys=Object.keys(SCEN); let n;
+  do{ n=keys[Math.floor(Math.random()*keys.length)]; }while(+n===current&&keys.length>1);
+  setExam(false);
+  loadScene(n);
+  document.getElementById("showClin").checked=true;
+  renderClin();
+  setExam(true);
+  window.scrollTo({top:0,behavior:"smooth"});
+};
+document.getElementById("random").onclick=()=>{
+  setExam(false);
+  const keys=Object.keys(SCEN); let n;
+  do{ n=keys[Math.floor(Math.random()*keys.length)]; }while(+n===current&&keys.length>1);
+  loadScene(n);
+};
+document.getElementById("next").onclick=()=>{
+  setExam(false);
+  const keys=Object.keys(SCEN).map(Number);
+  const idx=keys.indexOf(current);
+  loadScene(keys[(idx+1)%keys.length]);
+};
+picker.onchange=e=>{ setExam(false); loadScene(e.target.value); };
+
+loadScene(1);
+</script>
+</body>
+</html>
